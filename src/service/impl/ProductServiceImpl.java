@@ -18,4 +18,13 @@ public class ProductServiceImpl implements IProductService {
             return productList;
         }
     }
+
+    @Override
+    public void addProduct(Product product) {
+        if (product == null){
+            throw  new IllegalArgumentException("Product cannot be null");
+        }else {
+            productDao.addProduct(product);
+        }
+    }
 }

@@ -3,6 +3,7 @@ package presentation;
 import model.Product;
 import service.IProductService;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -32,6 +33,7 @@ public class ProductView {
                     showAllProducts(sc);
                     break;
                 case 2:
+                    addNewProduct(sc);
                     break;
                 case 3:
                     break;
@@ -66,5 +68,23 @@ public class ProductView {
             }
         }
         System.out.println("========================================");
+    }
+
+    public static void addNewProduct(Scanner sc){
+        System.out.println("""
+                ========== Thêm mới sản phẩm ==========
+                """);
+        System.out.print("Tên sản phẩm: ");
+        String name = sc.nextLine();
+        System.out.print("Thương hiệu: ");
+        String brand = sc.nextLine();
+        System.out.print("Giá: ");
+        BigDecimal price = sc.nextBigDecimal();
+        sc.nextLine();
+        System.out.print("Số lượng tồn kho: ");
+        int stock = Integer.parseInt(sc.nextLine());
+        Product product = new Product(name, brand, price, stock);
+        productService.addProduct(product);
+        System.out.println("Thêm sản phẩm thành công");
     }
 }

@@ -33,4 +33,21 @@ public class ProductDaoImpl implements IProductDao {
             throw new RuntimeException(e);
         }
     }
+
+    @Override
+    public void addProduct(Product product) {
+        try(
+                Connection conn = ConnectionDB.getConnection();
+                PreparedStatement pre = conn.prepareStatement("insert into product(name, brand, price, stock) values (?,?,?,?)");
+                ) {
+            pre.setString(1,product.getName());
+            pre.setString(2,product.getBrand());
+            pre.setBigDecimal(3,product.getPrice());
+            pre.setInt(4,product.getStock());
+            pre.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }
