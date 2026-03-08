@@ -36,8 +36,10 @@ public class ProductView {
                     addNewProduct(sc);
                     break;
                 case 3:
+                    updateProduct(sc);
                     break;
                 case 4:
+                    deleteProduct(sc);
                     break;
                 case 5:
                     break;
@@ -86,5 +88,68 @@ public class ProductView {
         Product product = new Product(name, brand, price, stock);
         productService.addProduct(product);
         System.out.println("Thêm sản phẩm thành công");
+    }
+
+    public static void updateProduct(Scanner sc){
+        System.out.println("""
+                ========== Cập nhật thông tin sản phẩm ==========
+                """);
+        System.out.print("Nhập ID sản phẩm cần cập nhật: ");
+        int id = Integer.parseInt(sc.nextLine());
+        Product product = productService.findProductById(id);
+        if(product == null){
+            System.out.println("Không tìm thấy sản phẩm có ID: "+ id);
+        }else {
+            System.out.println("Thông tin sản phẩm có ID "+ id);
+            System.out.println(product);
+            System.out.println("Nhập thông tin mới cho sản phẩm (để trống nếu không muốn cập nhật trường đó)");
+            System.out.print("Tên sản phẩm: ");
+            String name = sc.nextLine();
+            if (!name.isEmpty()) {
+                product.setName(name);
+            }
+            System.out.print("Thương hiệu: ");
+            String brand = sc.nextLine();
+            if (!brand.isEmpty()) {
+                product.setBrand(brand);
+            }
+            System.out.print("Giá: ");
+            String priceInput = sc.nextLine();
+            if (!priceInput.isEmpty()) {
+                BigDecimal price = new BigDecimal(priceInput);
+                product.setPrice(price);
+            }
+            System.out.print("Số lượng tồn kho: ");
+            String stockInput = sc.nextLine();
+            if (!stockInput.isEmpty()) {
+                int stock = Integer.parseInt(stockInput);
+                product.setStock(stock);
+            }
+            productService.updateProduct(product);
+            System.out.println("Cập nhật sản phẩm thành công");
+        }
+    }
+
+    public static void deleteProduct(Scanner sc){
+        System.out.println("""
+                ========== Xoá sản phẩm ==========
+                """);
+        System.out.print("Nhập ID sản phẩm cần xoá: ");
+        int id = Integer.parseInt(sc.nextLine());
+        Product product = productService.findProductById(id);
+        if(product == null){
+            System.out.println("Không tìm thấy sản phẩm có ID: "+ id);
+        }else {
+            System.out.println("Thông tin sản phẩm có ID "+ id);
+            System.out.println(product);
+            System.out.print("Bạn có chắc muốn xoá sản phẩm này? (Y/N): ");
+            String confirm = sc.nextLine();
+            if (confirm.equalsIgnoreCase("Y")){
+                productService.deleteProduct(id);
+                System.out.println("Xoá sản phẩm thành công");
+            } else {
+                System.out.println("Đã huỷ xoá sản phẩm");
+            }
+        }
     }
 }

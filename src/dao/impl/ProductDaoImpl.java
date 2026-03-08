@@ -30,7 +30,8 @@ public class ProductDaoImpl implements IProductDao {
             }
             return productList;
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            return null;
         }
     }
 
@@ -46,7 +47,61 @@ public class ProductDaoImpl implements IProductDao {
             pre.setInt(4,product.getStock());
             pre.executeUpdate();
         } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void updateProduct(Product product) {
+        try (
+                Connection conn = ConnectionDB.getConnection();
+                PreparedStatement pre = conn.prepareStatement("update product set name = ?, brand = ?, price = ?, stock = ? where id = ?");
+                ) {
+            pre.setString(1,product.getName());
+            pre.setString(2,product.getBrand());
+            pre.setBigDecimal(3,product.getPrice());
+            pre.setInt(4,product.getStock());
+            pre.setInt(5,product.getId());
+            pre.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public Product findProductById(int id) {
+        try(
+                Connection conn = ConnectionDB.getConnection();
+                PreparedStatement pre = conn.prepareStatement("select * from product where id = ?");
+                ) {
+            pre.setInt(1,id);
+            ResultSet rs = pre.executeQuery();
+            if (rs.next()){
+                return new Product(
+                        rs.getInt(1),
+                        rs.getString(2),
+                        rs.getString(3),
+                        rs.getBigDecimal(4),
+                        rs.getInt(5)
+                );
+            } else {
+                return null;
+                }
+        } catch (SQLException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void deleteProduct(int id) {
+        try(
+                Connection conn = ConnectionDB.getConnection();
+                PreparedStatement pre = conn.prepareStatement("delete from product where id = ?");
+                ) {
+            pre.setInt(1,id);
+            pre.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 

@@ -22,9 +22,24 @@ public class ProductServiceImpl implements IProductService {
     @Override
     public void addProduct(Product product) {
         if (product == null){
-            throw  new IllegalArgumentException("Product cannot be null");
+            throw  new IllegalArgumentException("Sản phẩm không được null");
         }else {
             productDao.addProduct(product);
         }
+    }
+
+    @Override
+    public void updateProduct(Product product) {
+        productDao.updateProduct(product);
+    }
+
+    @Override
+    public Product findProductById(int id) {
+        return productDao.findProductById(id);
+    }
+
+    @Override
+    public void deleteProduct(int id) {
+        productDao.deleteProduct(id);
     }
 }
