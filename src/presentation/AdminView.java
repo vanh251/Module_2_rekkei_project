@@ -6,6 +6,7 @@ import service.impl.AdminServiceImpl;
 
 import java.util.Scanner;
 
+import static presentation.CustomerView.showCustomerMenu;
 import static presentation.ProductView.showPhoneManagementMenu;
 
 public class AdminView {
@@ -74,6 +75,7 @@ public class AdminView {
                     showPhoneManagementMenu(sc);
                     break;
                 case 2:
+                    showCustomerMenu(sc);
                     break;
                 case 3:
                     break;
