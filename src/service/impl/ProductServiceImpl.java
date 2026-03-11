@@ -5,18 +5,14 @@ import dao.impl.ProductDaoImpl;
 import model.Product;
 import service.IProductService;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 public class ProductServiceImpl implements IProductService {
     private static final IProductDao productDao = new ProductDaoImpl();
     @Override
     public ArrayList<Product> showAllProducts() {
-        ArrayList<Product> productList = productDao.showAllProducts();
-        if (productList.isEmpty()){
-            return null;
-        } else {
-            return productList;
-        }
+        return productDao.showAllProducts();
     }
 
     @Override
@@ -41,5 +37,20 @@ public class ProductServiceImpl implements IProductService {
     @Override
     public void deleteProduct(int id) {
         productDao.deleteProduct(id);
+    }
+
+    @Override
+    public ArrayList<Product> findProductByBrand(String brand) {
+        return productDao.findProductByBrand(brand);
+    }
+
+    @Override
+    public ArrayList<Product> findProductByPriceRange(BigDecimal minPrice, BigDecimal maxPrice) {
+        return productDao.findProductByPriceRange(minPrice, maxPrice);
+    }
+
+    @Override
+    public ArrayList<Product> findProductByStockAvailability(String name, int stock) {
+        return productDao.findProductByStockAvailability(name, stock);
     }
 }

@@ -4,6 +4,7 @@ import dao.IProductDao;
 import model.Product;
 import utils.ConnectionDB;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -88,7 +89,8 @@ public class ProductDaoImpl implements IProductDao {
                 return null;
                 }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            return null;
         }
     }
 
@@ -102,6 +104,83 @@ public class ProductDaoImpl implements IProductDao {
             pre.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    public ArrayList<Product> findProductByBrand(String brand) {
+        ArrayList<Product> productList = new ArrayList<>();
+        try(
+                Connection conn = ConnectionDB.getConnection();
+                PreparedStatement pre = conn.prepareStatement("select * from product where brand ilike ?");
+                ) {
+            pre.setString(1, "%" + brand + "%");
+            ResultSet rs = pre.executeQuery();
+            while (rs.next()){
+                productList.add(new Product(
+                        rs.getInt(1),
+                        rs.getString(2),
+                        rs.getString(3),
+                        rs.getBigDecimal(4),
+                        rs.getInt(5)
+                ));
+            }
+            return productList;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public ArrayList<Product> findProductByPriceRange(BigDecimal minPrice, BigDecimal maxPrice) {
+        try(
+                Connection conn = ConnectionDB.getConnection();
+                PreparedStatement pre = conn.prepareStatement("select * from product where price between ? and ?");
+                ) {
+            pre.setBigDecimal(1, minPrice);
+            pre.setBigDecimal(2, maxPrice);
+            ResultSet rs = pre.executeQuery();
+            ArrayList<Product> productList = new ArrayList<>();
+            while (rs.next()){
+                productList.add(new Product(
+                        rs.getInt(1),
+                        rs.getString(2),
+                        rs.getString(3),
+                        rs.getBigDecimal(4),
+                        rs.getInt(5)
+                ));
+            }
+            return productList;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public ArrayList<Product> findProductByStockAvailability(String name, int stock) {
+        try(
+                Connection conn = ConnectionDB.getConnection();
+                PreparedStatement pre = conn.prepareStatement("select * from product where name ilike ? and stock >= ?");
+                ) {
+            pre.setString(1, "%" + name + "%");
+            pre.setInt(2, stock);
+            ResultSet rs = pre.executeQuery();
+            ArrayList<Product> productList = new ArrayList<>();
+            while (rs.next()){
+                productList.add(new Product(
+                        rs.getInt(1),
+                        rs.getString(2),
+                        rs.getString(3),
+                        rs.getBigDecimal(4),
+                        rs.getInt(5)
+                ));
+            }
+            return productList;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 

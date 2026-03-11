@@ -42,10 +42,13 @@ public class ProductView {
                     deleteProduct(sc);
                     break;
                 case 5:
+                    findProductByBrand(sc);
                     break;
                 case 6:
+                    findProductByPriceRange(sc);
                     break;
                 case 7:
+                    findProductByStockAvailability(sc);
                     break;
                 case 8:
                     showMainMenu(sc);
@@ -62,7 +65,7 @@ public class ProductView {
                 ========== Danh sách sản phẩm ==========
                 """);
         ArrayList<Product> products = productService.showAllProducts();
-        if (products == null){
+        if (products.isEmpty()){
             System.out.println("Không có sản phẩm nào trong cửa hàng");
         } else {
             for (Product p : products) {
@@ -149,6 +152,63 @@ public class ProductView {
                 System.out.println("Xoá sản phẩm thành công");
             } else {
                 System.out.println("Đã huỷ xoá sản phẩm");
+            }
+        }
+    }
+
+    public static void findProductByBrand(Scanner sc){
+        System.out.println("""
+                ========== Tìm kiếm sản phẩm theo thương hiệu ==========
+                """);
+        System.out.print("Nhập thương hiệu cần tìm: ");
+        String brand = sc.nextLine();
+        ArrayList<Product> products = productService.findProductByBrand(brand);
+        if (products.isEmpty()){
+            System.out.println("Không tìm thấy sản phẩm nào có thương hiệu: "+ brand);
+        } else {
+            System.out.println("Danh sách sản phẩm có thương hiệu "+ brand +":");
+            for (Product p : products) {
+                System.out.println(p);
+            }
+        }
+    }
+
+    public static void findProductByPriceRange(Scanner sc){
+        System.out.println("""
+                ========== Tìm kiếm sản phẩm theo khoảng giá ==========
+                """);
+        System.out.print("Nhập giá tối thiểu: ");
+        BigDecimal minPrice = sc.nextBigDecimal();
+        sc.nextLine();
+        System.out.print("Nhập giá tối đa: ");
+        BigDecimal maxPrice = sc.nextBigDecimal();
+        sc.nextLine();
+        ArrayList<Product> products = productService.findProductByPriceRange(minPrice, maxPrice);
+        if (products.isEmpty()){
+            System.out.println("Không tìm thấy sản phẩm nào trong khoảng giá: "+ minPrice + " - " + maxPrice);
+        } else {
+            System.out.println("Danh sách sản phẩm trong khoảng giá "+ minPrice + " - " + maxPrice +":");
+            for (Product p : products) {
+                System.out.println(p);
+            }
+        }
+    }
+
+    public static void findProductByStockAvailability(Scanner sc){
+        System.out.println("""
+                ========== Tìm kiếm sản phẩm theo tồn kho ==========
+                """);
+        System.out.print("Nhập tên sản phẩm cần tìm: ");
+        String name = sc.nextLine();
+        System.out.print("Nhập số lượng tồn kho tối thiểu: ");
+        int stock = Integer.parseInt(sc.nextLine());
+        ArrayList<Product> products = productService.findProductByStockAvailability(name, stock);
+        if (products.isEmpty()){
+            System.out.println("Không tìm thấy sản phẩm nào có tên "+ name +" và tồn kho >= "+ stock);
+        } else {
+            System.out.println("Danh sách sản phẩm có tên "+ name +" và tồn kho >= "+ stock +":");
+            for (Product p : products) {
+                System.out.println(p);
             }
         }
     }

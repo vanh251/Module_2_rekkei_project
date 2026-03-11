@@ -2,6 +2,7 @@ package service;
 
 import model.Product;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 public interface IProductService {
@@ -10,4 +11,7 @@ public interface IProductService {
     void updateProduct(Product product);
     Product findProductById(int id);
     void deleteProduct(int id);
+    ArrayList<Product> findProductByBrand(String brand);
+    ArrayList<Product> findProductByPriceRange(BigDecimal minPrice, BigDecimal maxPrice);
+    ArrayList<Product> findProductByStockAvailability(String name, int stock);
 }
