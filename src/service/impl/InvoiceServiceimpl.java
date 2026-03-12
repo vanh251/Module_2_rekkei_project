@@ -30,4 +30,19 @@ public class InvoiceServiceimpl implements IInvoiceService {
     public List<Invoice> findInvoiceByDate(LocalDate date) {
         return invoiceDao.findInvoicesByDate(date);
     }
+
+    @Override
+    public Double getRevenueByDate(LocalDate date) {
+        return invoiceDao.getRevenueByDate(date);
+    }
+
+    @Override
+    public Double getRevenueByMonth(int month, int year) {
+        return invoiceDao.getRevenueByMonth(month, year);
+    }
+
+    @Override
+    public Double getRevenueByYear(int year) {
+        return invoiceDao.getRevenueByYear(year);
+    }
 }

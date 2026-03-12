@@ -10,6 +10,7 @@ import java.util.Scanner;
 import static presentation.CustomerView.showCustomerMenu;
 import static presentation.InvoiceView.showInvoiceMenu;
 import static presentation.ProductView.showPhoneManagementMenu;
+import static presentation.RevenueView.showRevenueMenu;
 
 public class AdminView {
     private static final IAdminService adminService = new AdminServiceImpl();
@@ -76,6 +77,7 @@ public class AdminView {
                     showInvoiceMenu(sc);
                     break;
                 case 4:
+                    showRevenueMenu(sc);
                     break;
                 case 5:
                     System.out.println("Đăng xuất thành công");

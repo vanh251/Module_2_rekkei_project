@@ -10,4 +10,7 @@ public interface IInvoiceService {
     void addInvoice(Invoice invoice);
     List<Invoice> findInvoiceByCustomerId(int customerId);
     List<Invoice> findInvoiceByDate(LocalDate date);
+    Double getRevenueByDate(LocalDate date);
+    Double getRevenueByMonth(int month, int year);
+    Double getRevenueByYear(int year);
 }

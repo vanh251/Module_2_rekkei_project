@@ -97,4 +97,56 @@ public class InvoiceDaoImpl implements IInvoiceDao {
             return new ArrayList<>();
         }
     }
+
+    @Override
+    public Double getRevenueByDate(LocalDate date) {
+        try(
+                Connection conn = ConnectionDB.getConnection();
+                PreparedStatement pre = conn.prepareStatement("select sum(total_amount) from invoice where date(created_at) = ?");
+                ) {
+            pre.setDate(1, java.sql.Date.valueOf(date));
+            ResultSet rs = pre.executeQuery();
+            if (rs.next()){
+                return rs.getDouble(1);
+            }
+        } catch (SQLException e) {
+            System.out.println("Lỗi khi tính doanh thu theo ngày: " + e.getMessage());
+        }
+        return 0.0;
+    }
+
+    @Override
+    public Double getRevenueByMonth(int month, int year) {
+        try(
+                Connection conn = ConnectionDB.getConnection();
+                PreparedStatement pre = conn.prepareStatement("select sum(total_amount) from invoice where extract(month from created_at) = ? and extract( year from created_at) = ?");
+                ) {
+            pre.setInt(1, month);
+            pre.setInt(2, year);
+            ResultSet rs = pre.executeQuery();
+            if (rs.next()){
+                return rs.getDouble(1);
+            }
+        } catch (SQLException e) {
+            System.out.println("Lỗi khi tính doanh thu theo tháng: " + e.getMessage());
+        }
+        return 0.0;
+    }
+
+    @Override
+    public Double getRevenueByYear(int year) {
+        try(
+                Connection conn = ConnectionDB.getConnection();
+                PreparedStatement pre = conn.prepareStatement("select sum(total_amount) from invoice where extract(year from created_at) = ?");
+                ) {
+            pre.setInt(1, year);
+            ResultSet rs = pre.executeQuery();
+            if (rs.next()){
+                return rs.getDouble(1);
+            }
+        } catch (SQLException e) {
+            System.out.println("Lỗi khi tính doanh thu theo năm: " + e.getMessage());
+        }
+        return 0.0;
+    }
 }

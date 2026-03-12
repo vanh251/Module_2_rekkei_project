@@ -10,4 +10,7 @@ public interface IInvoiceDao {
     void addInvoice(Invoice invoice);
     List<Invoice> findInvoicesByCustomerId(int customerId);
     List<Invoice> findInvoicesByDate(LocalDate date);
+    Double getRevenueByDate(LocalDate date);
+    Double getRevenueByMonth(int month, int year);
+    Double getRevenueByYear(int year);
 }
