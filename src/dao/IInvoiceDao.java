@@ -2,9 +2,12 @@ package dao;
 
 import model.Invoice;
 
-import java.util.ArrayList;
+import java.time.LocalDate;
+import java.util.List;
 
 public interface IInvoiceDao {
-    ArrayList<Invoice> displayAllInvoices();
+    List<Invoice> displayAllInvoices();
     void addInvoice(Invoice invoice);
+    List<Invoice> findInvoicesByCustomerId(int customerId);
+    List<Invoice> findInvoicesByDate(LocalDate date);
 }

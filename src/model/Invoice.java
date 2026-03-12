@@ -19,9 +19,8 @@ public class Invoice {
         this.totalAmount = totalAmount;
     }
 
-    public Invoice(int customerId, LocalDateTime createdAt, BigDecimal totalAmount) {
+    public Invoice(int customerId, BigDecimal totalAmount) {
         this.customerId = customerId;
-        this.createdAt = createdAt;
         this.totalAmount = totalAmount;
     }
 
@@ -59,6 +58,6 @@ public class Invoice {
 
     @Override
     public String toString() {
-        return String.format("|%-5d|%-12d|%-20s|%-15s|", id, customerId, createdAt, totalAmount);
+        return String.format("|%-5d|%-10d|%-30s|%-12s|", id, customerId, createdAt, totalAmount);
     }
 }

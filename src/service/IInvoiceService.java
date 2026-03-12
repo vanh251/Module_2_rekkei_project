@@ -2,9 +2,12 @@ package service;
 
 import model.Invoice;
 
-import java.util.ArrayList;
+import java.time.LocalDate;
+import java.util.List;
 
 public interface IInvoiceService {
-    ArrayList<Invoice> displayAllInvoices();
+    List<Invoice> displayAllInvoices();
     void addInvoice(Invoice invoice);
+    List<Invoice> findInvoiceByCustomerId(int customerId);
+    List<Invoice> findInvoiceByDate(LocalDate date);
 }

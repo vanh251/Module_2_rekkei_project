@@ -9,16 +9,17 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class CustomerDaoImpl implements ICustomerDao {
     @Override
-    public ArrayList<Customer> displayAllCustomers() {
+    public List<Customer> displayAllCustomers() {
         try(
                 Connection conn = ConnectionDB.getConnection();
                 PreparedStatement pre = conn.prepareStatement("select * from customer");
                 ) {
             ResultSet rs = pre.executeQuery();
-            ArrayList<Customer> customerList = new ArrayList<>();
+            List<Customer> customerList = new ArrayList<>();
             while (rs.next())
             {
                 customerList.add(new Customer(
@@ -31,8 +32,8 @@ public class CustomerDaoImpl implements ICustomerDao {
             }
             return customerList;
         } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
+            System.out.println("Lỗi khi truy vấn khách hàng: " + e.getMessage());
+            return new ArrayList<>();
         }
     }
 
@@ -48,7 +49,7 @@ public class CustomerDaoImpl implements ICustomerDao {
             pre.setString(4, customer.getAddress());
             pre.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("Lỗi khi thêm khách hàng: " + e.getMessage());
         }
     }
 
@@ -71,7 +72,7 @@ public class CustomerDaoImpl implements ICustomerDao {
             }
             return null;
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("Lỗi khi tìm khách hàng: " + e.getMessage());
             return null;
         }
     }
@@ -89,7 +90,7 @@ public class CustomerDaoImpl implements ICustomerDao {
             pre.setInt(5, customer.getId());
             pre.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("Lỗi khi cập nhật khách hàng: " + e.getMessage());
         }
     }
 
@@ -98,11 +99,36 @@ public class CustomerDaoImpl implements ICustomerDao {
         try(
                 Connection conn = ConnectionDB.getConnection();
                 PreparedStatement pre = conn.prepareStatement("delete from customer where id = ?");
-        ) {
+                ) {
             pre.setInt(1, id);
             pre.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("Lỗi khi xoá khách hàng: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public List<Customer> findCustomersByName(String name) {
+        try(
+                Connection conn = ConnectionDB.getConnection();
+                PreparedStatement pre = conn.prepareStatement("select * from customer where name ilike ?");
+                ) {
+            pre.setString(1, "%" + name + "%");
+            ResultSet rs = pre.executeQuery();
+            List<Customer> customerList = new ArrayList<>();
+            while (rs.next()){
+                customerList.add(new Customer(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getString("phone"),
+                        rs.getString("email"),
+                        rs.getString("address")
+                ));
+            }
+            return customerList;
+        } catch (SQLException e) {
+            System.out.println("Lỗi khi tìm kiếm khách hàng theo tên: " + e.getMessage());
+            return new ArrayList<>();
         }
     }
 }

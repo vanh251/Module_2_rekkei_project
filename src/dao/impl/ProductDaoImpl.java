@@ -10,11 +10,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ProductDaoImpl implements IProductDao {
     @Override
-    public ArrayList<Product> showAllProducts() {
-        ArrayList<Product> productList = new ArrayList<>();
+    public List<Product> showAllProducts() {
+        List<Product> productList = new ArrayList<>();
         try(
                 Connection conn = ConnectionDB.getConnection();
                 PreparedStatement pre = conn.prepareStatement("select * from product");
@@ -31,8 +32,8 @@ public class ProductDaoImpl implements IProductDao {
             }
             return productList;
         } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
+            System.out.println("Lỗi khi truy vấn sản phẩm: " + e.getMessage());
+            return new ArrayList<>();
         }
     }
 
@@ -48,7 +49,7 @@ public class ProductDaoImpl implements IProductDao {
             pre.setInt(4,product.getStock());
             pre.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("Lỗi khi thêm sản phẩm: " + e.getMessage());
         }
     }
 
@@ -65,7 +66,7 @@ public class ProductDaoImpl implements IProductDao {
             pre.setInt(5,product.getId());
             pre.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("Lỗi khi cập nhật sản phẩm: " + e.getMessage());
         }
     }
 
@@ -89,7 +90,7 @@ public class ProductDaoImpl implements IProductDao {
                 return null;
                 }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("Lỗi khi tìm sản phẩm: " + e.getMessage());
             return null;
         }
     }
@@ -103,13 +104,13 @@ public class ProductDaoImpl implements IProductDao {
             pre.setInt(1,id);
             pre.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("Lỗi khi xoá sản phẩm: " + e.getMessage());
         }
     }
 
     @Override
-    public ArrayList<Product> findProductByBrand(String brand) {
-        ArrayList<Product> productList = new ArrayList<>();
+    public List<Product> findProductByBrand(String brand) {
+        List<Product> productList = new ArrayList<>();
         try(
                 Connection conn = ConnectionDB.getConnection();
                 PreparedStatement pre = conn.prepareStatement("select * from product where brand ilike ?");
@@ -127,13 +128,13 @@ public class ProductDaoImpl implements IProductDao {
             }
             return productList;
         } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
+            System.out.println("Lỗi khi tìm sản phẩm theo thương hiệu: " + e.getMessage());
+            return new ArrayList<>();
         }
     }
 
     @Override
-    public ArrayList<Product> findProductByPriceRange(BigDecimal minPrice, BigDecimal maxPrice) {
+    public List<Product> findProductByPriceRange(BigDecimal minPrice, BigDecimal maxPrice) {
         try(
                 Connection conn = ConnectionDB.getConnection();
                 PreparedStatement pre = conn.prepareStatement("select * from product where price between ? and ?");
@@ -141,7 +142,7 @@ public class ProductDaoImpl implements IProductDao {
             pre.setBigDecimal(1, minPrice);
             pre.setBigDecimal(2, maxPrice);
             ResultSet rs = pre.executeQuery();
-            ArrayList<Product> productList = new ArrayList<>();
+            List<Product> productList = new ArrayList<>();
             while (rs.next()){
                 productList.add(new Product(
                         rs.getInt(1),
@@ -153,13 +154,13 @@ public class ProductDaoImpl implements IProductDao {
             }
             return productList;
         } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
+            System.out.println("Lỗi khi tìm sản phẩm theo giá: " + e.getMessage());
+            return new ArrayList<>();
         }
     }
 
     @Override
-    public ArrayList<Product> findProductByStockAvailability(String name, int stock) {
+    public List<Product> findProductByStockAvailability(String name, int stock) {
         try(
                 Connection conn = ConnectionDB.getConnection();
                 PreparedStatement pre = conn.prepareStatement("select * from product where name ilike ? and stock >= ?");
@@ -167,7 +168,7 @@ public class ProductDaoImpl implements IProductDao {
             pre.setString(1, "%" + name + "%");
             pre.setInt(2, stock);
             ResultSet rs = pre.executeQuery();
-            ArrayList<Product> productList = new ArrayList<>();
+            List<Product> productList = new ArrayList<>();
             while (rs.next()){
                 productList.add(new Product(
                         rs.getInt(1),
@@ -179,9 +180,8 @@ public class ProductDaoImpl implements IProductDao {
             }
             return productList;
         } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
+            System.out.println("Lỗi khi tìm sản phẩm theo tồn kho: " + e.getMessage());
+            return new ArrayList<>();
         }
     }
-
 }

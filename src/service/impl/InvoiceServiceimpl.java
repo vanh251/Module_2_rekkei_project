@@ -5,18 +5,29 @@ import dao.impl.InvoiceDaoImpl;
 import model.Invoice;
 import service.IInvoiceService;
 
-import java.util.ArrayList;
+import java.time.LocalDate;
+import java.util.List;
 
 public class InvoiceServiceimpl implements IInvoiceService {
-    private static final IInvoiceDao invoiceDao = new InvoiceDaoImpl();
+    private final IInvoiceDao invoiceDao = new InvoiceDaoImpl();
 
     @Override
-    public ArrayList<Invoice> displayAllInvoices() {
+    public List<Invoice> displayAllInvoices() {
         return invoiceDao.displayAllInvoices();
     }
 
     @Override
     public void addInvoice(Invoice invoice) {
+        invoiceDao.addInvoice(invoice);
+    }
 
+    @Override
+    public List<Invoice> findInvoiceByCustomerId(int customerId) {
+        return invoiceDao.findInvoicesByCustomerId(customerId);
+    }
+
+    @Override
+    public List<Invoice> findInvoiceByDate(LocalDate date) {
+        return invoiceDao.findInvoicesByDate(date);
     }
 }

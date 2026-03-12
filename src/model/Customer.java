@@ -67,6 +67,9 @@ public class Customer {
 
     @Override
     public String toString() {
-        return String.format("| %-3d | %-20s | %-15s | %-25s | %-30s |", id, name, phone, email, address);
+        return String.format("|%-5d|%-22s|%-17s|%-29s|%-34s|",
+                id, name, phone != null ? phone : "", 
+                email != null ? email : "", 
+                address != null ? address : "");
     }
 }

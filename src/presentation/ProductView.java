@@ -2,9 +2,10 @@ package presentation;
 
 import model.Product;
 import service.IProductService;
+import utils.InputValidator;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 import static presentation.AdminView.showMainMenu;
@@ -26,8 +27,7 @@ public class ProductView {
                     8. Quay lại menu chính
                     ======================================
                     """);
-            System.out.print("Nhập lựa chọn: ");
-            int choice = Integer.parseInt(sc.nextLine());
+            int choice = InputValidator.getIntInRange(sc, "Nhập lựa chọn: ", 1, 8);
             switch (choice){
                 case 1:
                     showAllProducts(sc);
@@ -53,9 +53,6 @@ public class ProductView {
                 case 8:
                     showMainMenu(sc);
                     break;
-                default:
-                    System.out.println("Lựa chọn không hợp lệ, vui lòng chọn lại");
-                    break;
             }
         }
     }
@@ -64,30 +61,29 @@ public class ProductView {
         System.out.println("""
                 ========== Danh sách sản phẩm ==========
                 """);
-        ArrayList<Product> products = productService.showAllProducts();
+        List<Product> products = productService.showAllProducts();
         if (products.isEmpty()){
             System.out.println("Không có sản phẩm nào trong cửa hàng");
         } else {
+            System.out.println("+-----+---------------------------+-----------------+----------------+-------+");
+            System.out.printf("|%-5s|%-27s|%-17s|%-16s|%-7s|\n", "ID", "Tên", "Thương hiệu", "Giá (đ)", "Kho");
+            System.out.println("+-----+---------------------------+-----------------+----------------+-------+");
             for (Product p : products) {
                 System.out.println(p);
             }
+            System.out.println("+-----+---------------------------+-----------------+----------------+-------+");
         }
-        System.out.println("========================================");
     }
 
     public static void addNewProduct(Scanner sc){
         System.out.println("""
                 ========== Thêm mới sản phẩm ==========
                 """);
-        System.out.print("Tên sản phẩm: ");
-        String name = sc.nextLine();
-        System.out.print("Thương hiệu: ");
-        String brand = sc.nextLine();
-        System.out.print("Giá: ");
-        BigDecimal price = sc.nextBigDecimal();
-        sc.nextLine();
-        System.out.print("Số lượng tồn kho: ");
-        int stock = Integer.parseInt(sc.nextLine());
+        String name = InputValidator.getValidString(sc, "Tên sản phẩm: ", 2, 50);
+        String brand = InputValidator.getValidString(sc, "Thương hiệu: ", 2, 30);
+        BigDecimal price = InputValidator.getPositiveBigDecimal(sc, "Giá: ");
+        int stock = InputValidator.getPositiveInt(sc, "Số lượng tồn kho: ");
+        
         Product product = new Product(name, brand, price, stock);
         productService.addProduct(product);
         System.out.println("Thêm sản phẩm thành công");
@@ -97,8 +93,7 @@ public class ProductView {
         System.out.println("""
                 ========== Cập nhật thông tin sản phẩm ==========
                 """);
-        System.out.print("Nhập ID sản phẩm cần cập nhật: ");
-        int id = Integer.parseInt(sc.nextLine());
+        int id = InputValidator.getPositiveInt(sc, "Nhập ID sản phẩm cần cập nhật: ");
         Product product = productService.findProductById(id);
         if(product == null){
             System.out.println("Không tìm thấy sản phẩm có ID: "+ id);
@@ -107,26 +102,34 @@ public class ProductView {
             System.out.println(product);
             System.out.println("Nhập thông tin mới cho sản phẩm (để trống nếu không muốn cập nhật trường đó)");
             System.out.print("Tên sản phẩm: ");
-            String name = sc.nextLine();
+            String name = sc.nextLine().trim();
             if (!name.isEmpty()) {
                 product.setName(name);
             }
             System.out.print("Thương hiệu: ");
-            String brand = sc.nextLine();
+            String brand = sc.nextLine().trim();
             if (!brand.isEmpty()) {
                 product.setBrand(brand);
             }
             System.out.print("Giá: ");
-            String priceInput = sc.nextLine();
+            String priceInput = sc.nextLine().trim();
             if (!priceInput.isEmpty()) {
-                BigDecimal price = new BigDecimal(priceInput);
-                product.setPrice(price);
+                try {
+                    BigDecimal price = new BigDecimal(priceInput);
+                    product.setPrice(price);
+                } catch (NumberFormatException e) {
+                    System.out.println("Lỗi: Giá không hợp lệ, bỏ qua cập nhật giá");
+                }
             }
             System.out.print("Số lượng tồn kho: ");
-            String stockInput = sc.nextLine();
+            String stockInput = sc.nextLine().trim();
             if (!stockInput.isEmpty()) {
-                int stock = Integer.parseInt(stockInput);
-                product.setStock(stock);
+                try {
+                    int stock = Integer.parseInt(stockInput);
+                    product.setStock(stock);
+                } catch (NumberFormatException e) {
+                    System.out.println("Lỗi: Số lượng không hợp lệ, bỏ qua cập nhật số lượng");
+                }
             }
             productService.updateProduct(product);
             System.out.println("Cập nhật sản phẩm thành công");
@@ -137,8 +140,7 @@ public class ProductView {
         System.out.println("""
                 ========== Xoá sản phẩm ==========
                 """);
-        System.out.print("Nhập ID sản phẩm cần xoá: ");
-        int id = Integer.parseInt(sc.nextLine());
+        int id = InputValidator.getPositiveInt(sc, "Nhập ID sản phẩm cần xoá: ");
         Product product = productService.findProductById(id);
         if(product == null){
             System.out.println("Không tìm thấy sản phẩm có ID: "+ id);
@@ -151,7 +153,7 @@ public class ProductView {
                 productService.deleteProduct(id);
                 System.out.println("Xoá sản phẩm thành công");
             } else {
-                System.out.println("Đã huỷ xoá sản phẩm");
+                System.out.println("Đã hủy xoá sản phẩm");
             }
         }
     }
@@ -160,16 +162,20 @@ public class ProductView {
         System.out.println("""
                 ========== Tìm kiếm sản phẩm theo thương hiệu ==========
                 """);
-        System.out.print("Nhập thương hiệu cần tìm: ");
-        String brand = sc.nextLine();
-        ArrayList<Product> products = productService.findProductByBrand(brand);
+        String brand = InputValidator.getNonEmptyString(sc, "Nhập thương hiệu cần tìm: ");
+        List<Product> products = productService.findProductByBrand(brand);
         if (products.isEmpty()){
             System.out.println("Không tìm thấy sản phẩm nào có thương hiệu: "+ brand);
         } else {
             System.out.println("Danh sách sản phẩm có thương hiệu "+ brand +":");
+            System.out.println("+-----+---------------------------+-----------------+----------------+-------+");
+            System.out.printf("|%-5s|%-27s|%-17s|%-16s|%-7s|\n", "ID", "Tên", "Thương hiệu", "Giá (đ)", "Kho");
+            System.out.println("+-----+---------------------------+-----------------+----------------+-------+");
             for (Product p : products) {
-                System.out.println(p);
+                System.out.printf("|%-5d|%-27s|%-17s|%14.2f |%-7d|\n", 
+                    p.getId(), p.getName(), p.getBrand(), p.getPrice(), p.getStock());
             }
+            System.out.println("+-----+---------------------------+-----------------+----------------+-------+");
         }
     }
 
@@ -177,20 +183,21 @@ public class ProductView {
         System.out.println("""
                 ========== Tìm kiếm sản phẩm theo khoảng giá ==========
                 """);
-        System.out.print("Nhập giá tối thiểu: ");
-        BigDecimal minPrice = sc.nextBigDecimal();
-        sc.nextLine();
-        System.out.print("Nhập giá tối đa: ");
-        BigDecimal maxPrice = sc.nextBigDecimal();
-        sc.nextLine();
-        ArrayList<Product> products = productService.findProductByPriceRange(minPrice, maxPrice);
+        BigDecimal minPrice = InputValidator.getPositiveBigDecimal(sc, "Nhập giá tối thiểu: ");
+        BigDecimal maxPrice = InputValidator.getPositiveBigDecimal(sc, "Nhập giá tối đa: ");
+        List<Product> products = productService.findProductByPriceRange(minPrice, maxPrice);
         if (products.isEmpty()){
             System.out.println("Không tìm thấy sản phẩm nào trong khoảng giá: "+ minPrice + " - " + maxPrice);
         } else {
             System.out.println("Danh sách sản phẩm trong khoảng giá "+ minPrice + " - " + maxPrice +":");
+            System.out.println("+-----+---------------------------+-----------------+----------------+-------+");
+            System.out.printf("|%-5s|%-27s|%-17s|%-16s|%-7s|\n", "ID", "Tên", "Thương hiệu", "Giá (đ)", "Kho");
+            System.out.println("+-----+---------------------------+-----------------+----------------+-------+");
             for (Product p : products) {
-                System.out.println(p);
+                System.out.printf("|%-5d|%-27s|%-17s|%14.2f |%-7d|\n", 
+                    p.getId(), p.getName(), p.getBrand(), p.getPrice(), p.getStock());
             }
+            System.out.println("+-----+---------------------------+-----------------+----------------+-------+");
         }
     }
 
@@ -198,18 +205,21 @@ public class ProductView {
         System.out.println("""
                 ========== Tìm kiếm sản phẩm theo tồn kho ==========
                 """);
-        System.out.print("Nhập tên sản phẩm cần tìm: ");
-        String name = sc.nextLine();
-        System.out.print("Nhập số lượng tồn kho tối thiểu: ");
-        int stock = Integer.parseInt(sc.nextLine());
-        ArrayList<Product> products = productService.findProductByStockAvailability(name, stock);
+        String name = InputValidator.getNonEmptyString(sc, "Nhập tên sản phẩm cần tìm: ");
+        int stock = InputValidator.getPositiveInt(sc, "Nhập số lượng tồn kho tối thiểu: ");
+        List<Product> products = productService.findProductByStockAvailability(name, stock);
         if (products.isEmpty()){
             System.out.println("Không tìm thấy sản phẩm nào có tên "+ name +" và tồn kho >= "+ stock);
         } else {
             System.out.println("Danh sách sản phẩm có tên "+ name +" và tồn kho >= "+ stock +":");
+            System.out.println("+-----+---------------------------+-----------------+----------------+-------+");
+            System.out.printf("|%-5s|%-27s|%-17s|%-16s|%-7s|\n", "ID", "Tên", "Thương hiệu", "Giá (đ)", "Kho");
+            System.out.println("+-----+---------------------------+-----------------+----------------+-------+");
             for (Product p : products) {
-                System.out.println(p);
+                System.out.printf("|%-5d|%-27s|%-17s|%14.2f |%-7d|\n", 
+                    p.getId(), p.getName(), p.getBrand(), p.getPrice(), p.getStock());
             }
+            System.out.println("+-----+---------------------------+-----------------+----------------+-------+");
         }
     }
 }

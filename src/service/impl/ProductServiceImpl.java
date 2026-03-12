@@ -6,12 +6,13 @@ import model.Product;
 import service.IProductService;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
+import java.util.List;
 
 public class ProductServiceImpl implements IProductService {
-    private static final IProductDao productDao = new ProductDaoImpl();
+    private final IProductDao productDao = new ProductDaoImpl();
+
     @Override
-    public ArrayList<Product> showAllProducts() {
+    public List<Product> showAllProducts() {
         return productDao.showAllProducts();
     }
 
@@ -40,17 +41,17 @@ public class ProductServiceImpl implements IProductService {
     }
 
     @Override
-    public ArrayList<Product> findProductByBrand(String brand) {
+    public List<Product> findProductByBrand(String brand) {
         return productDao.findProductByBrand(brand);
     }
 
     @Override
-    public ArrayList<Product> findProductByPriceRange(BigDecimal minPrice, BigDecimal maxPrice) {
+    public List<Product> findProductByPriceRange(BigDecimal minPrice, BigDecimal maxPrice) {
         return productDao.findProductByPriceRange(minPrice, maxPrice);
     }
 
     @Override
-    public ArrayList<Product> findProductByStockAvailability(String name, int stock) {
+    public List<Product> findProductByStockAvailability(String name, int stock) {
         return productDao.findProductByStockAvailability(name, stock);
     }
 }

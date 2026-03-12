@@ -3,6 +3,7 @@ package presentation;
 import model.Admin;
 import service.IAdminService;
 import service.impl.AdminServiceImpl;
+import utils.InputValidator;
 
 import java.util.Scanner;
 
@@ -22,8 +23,7 @@ public class AdminView {
                     2. Thoát
                     ===============================================
                     """);
-            System.out.print("Nhập lựa chọn: ");
-            int choice = Integer.parseInt(sc.nextLine());
+            int choice = InputValidator.getIntInRange(sc, "Nhập lựa chọn: ", 1, 2);
             switch (choice){
                 case 1:
                     AdminView.showMenuLogin(sc);
@@ -31,9 +31,6 @@ public class AdminView {
                 case 2:
                     System.out.println("Thoát chương trình");
                     System.exit(0);
-                default:
-                    System.out.println("Lựa chọn không hợp lệ, vui lòng chọn lại");
-                    break;
             }
         }
     }
@@ -42,10 +39,8 @@ public class AdminView {
         System.out.println("""
                 ========== Đăng nhập quản trị ==========
                 """);
-        System.out.print("Tài khoản: ");
-        String username = sc.nextLine();
-        System.out.print("Mật khẩu: ");
-        String password = sc.nextLine();
+        String username = InputValidator.getNonEmptyString(sc, "Tài khoản: ");
+        String password = InputValidator.getNonEmptyString(sc, "Mật khẩu: ");
         System.out.println("========================================");
         Admin admin = adminService.login(username, password);
         if(admin!=null){
@@ -69,8 +64,7 @@ public class AdminView {
                 5. Đăng xuất
                 ===============================
                 """);
-            System.out.print("Nhập lựa chọn: ");
-            int choice = Integer.parseInt(sc.nextLine());
+            int choice = InputValidator.getIntInRange(sc, "Nhập lựa chọn: ", 1, 5);
             switch (choice){
                 case 1:
                     showPhoneManagementMenu(sc);
@@ -86,9 +80,6 @@ public class AdminView {
                 case 5:
                     System.out.println("Đăng xuất thành công");
                     showStartMenu(sc);
-                    break;
-                default:
-                    System.out.println("Lựa chọn không hợp lệ, vui lòng chọn lại");
                     break;
             }
         }
