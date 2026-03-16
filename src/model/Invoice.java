@@ -2,19 +2,24 @@ package model;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Invoice {
     private int id;
     private int customerId;
+    private String customerName;
     private LocalDateTime createdAt;
     private BigDecimal totalAmount;
+    private List<InvoiceItem> items = new ArrayList<>();
 
     public Invoice() {
     }
 
-    public Invoice(int id, int customerId, LocalDateTime createdAt, BigDecimal totalAmount) {
+    public Invoice(int id, int customerId, String customerName, LocalDateTime createdAt, BigDecimal totalAmount) {
         this.id = id;
         this.customerId = customerId;
+        this.customerName = customerName;
         this.createdAt = createdAt;
         this.totalAmount = totalAmount;
     }
@@ -40,6 +45,14 @@ public class Invoice {
         this.customerId = customerId;
     }
 
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -56,8 +69,20 @@ public class Invoice {
         this.totalAmount = totalAmount;
     }
 
+    public List<InvoiceItem> getItems() {
+        return items;
+    }
+
+    public void setItems(List<InvoiceItem> items) {
+        this.items = items;
+    }
+
     @Override
     public String toString() {
-        return String.format("|%-5d|%-10d|%-30s|%-12s|", id, customerId, createdAt, totalAmount);
+        String custDisplay = (customerName != null && !customerName.isEmpty()) ? customerName : ("ID:" + customerId);
+        String dateStr = (createdAt != null)
+                ? createdAt.format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"))
+                : "";
+        return String.format("|%-5d|%-22s|%-22s|%16.2f |", id, custDisplay, dateStr, totalAmount);
     }
 }

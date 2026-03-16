@@ -37,20 +37,22 @@ public class AdminView {
     }
 
     public static void showMenuLogin(Scanner sc){
-        System.out.println("""
-                ========== Đăng nhập quản trị ==========
-                """);
-        String username = InputValidator.getNonEmptyString(sc, "Tài khoản: ");
-        String password = InputValidator.getNonEmptyString(sc, "Mật khẩu: ");
-        System.out.println("========================================");
-        Admin admin = adminService.login(username, password);
-        if(admin!=null){
-            System.out.println("Đăng nhập thành công");
-            adminLogin = admin;
-            showMainMenu(sc);
-        }else{
-            System.out.println("Thông tin đăng nhập không đúng, vui lòng thử lại");
-            showMenuLogin(sc);
+        while (true) {
+            System.out.println("""
+                    ========== Đăng nhập quản trị ==========
+                    """);
+            String username = InputValidator.getNonEmptyString(sc, "Tài khoản: ");
+            String password = InputValidator.getNonEmptyString(sc, "Mật khẩu: ");
+            System.out.println("========================================");
+            Admin admin = adminService.login(username, password);
+            if (admin != null) {
+                System.out.println("Đăng nhập thành công");
+                adminLogin = admin;
+                showMainMenu(sc);
+                return;
+            } else {
+                System.out.println("Thông tin đăng nhập không đúng, vui lòng thử lại");
+            }
         }
     }
 
@@ -81,8 +83,8 @@ public class AdminView {
                     break;
                 case 5:
                     System.out.println("Đăng xuất thành công");
-                    showStartMenu(sc);
-                    break;
+                    adminLogin = null;
+                    return;
             }
         }
     }

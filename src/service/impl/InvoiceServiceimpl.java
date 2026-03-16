@@ -22,6 +22,11 @@ public class InvoiceServiceimpl implements IInvoiceService {
     }
 
     @Override
+    public int addInvoiceReturnId(Invoice invoice) {
+        return invoiceDao.addInvoiceReturnId(invoice);
+    }
+
+    @Override
     public List<Invoice> findInvoiceByCustomerId(int customerId) {
         return invoiceDao.findInvoicesByCustomerId(customerId);
     }

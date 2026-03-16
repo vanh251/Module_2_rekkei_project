@@ -81,6 +81,7 @@ public class CustomerView {
         System.out.println("""
                 ========== Cập nhật thông tin khách hàng ==========
                 """);
+        displayAllCustomers(sc);
         int id = InputValidator.getPositiveInt(sc, "Nhập ID khách hàng cần cập nhật: ");
         Customer customer = customerService.findCustomerById(id);
         if (customer == null) {
@@ -117,6 +118,7 @@ public class CustomerView {
         System.out.println("""
                 ========== Xoá khách hàng theo ID ==========
                 """);
+        displayAllCustomers(sc);
         int id = InputValidator.getPositiveInt(sc, "Nhập ID khách hàng cần xoá: ");
         Customer customer = customerService.findCustomerById(id);
         if (customer == null) {

@@ -26,6 +26,16 @@ public class InputValidator {
             System.out.println("Lỗi: Giá trị phải lớn hơn 0!");
         }
     }
+
+    public static int getPositiveIntOrZero(Scanner sc, String prompt) {
+        while (true) {
+            int value = getIntInput(sc, prompt);
+            if (value >= 0) {
+                return value;
+            }
+            System.out.println("Lỗi: Giá trị phải >= 0!");
+        }
+    }
     
     public static int getIntInRange(Scanner sc, String prompt, int min, int max) {
         while (true) {
@@ -39,34 +49,32 @@ public class InputValidator {
     
     public static BigDecimal getPositiveBigDecimal(Scanner sc, String prompt) {
         while (true) {
+            System.out.print(prompt);
+            String input = sc.nextLine().trim();
             try {
-                System.out.print(prompt);
-                BigDecimal value = sc.nextBigDecimal();
-                sc.nextLine();
+                BigDecimal value = new BigDecimal(input);
                 if (value.compareTo(BigDecimal.ZERO) > 0) {
                     return value;
                 }
                 System.out.println("Lỗi: Giá trị phải lớn hơn 0!");
             } catch (NumberFormatException e) {
                 System.out.println("Lỗi: Vui lòng nhập một số hợp lệ!");
-                sc.nextLine();
             }
         }
     }
     
     public static BigDecimal getBigDecimalInRange(Scanner sc, String prompt, BigDecimal min, BigDecimal max) {
         while (true) {
+            System.out.print(prompt);
+            String input = sc.nextLine().trim();
             try {
-                System.out.print(prompt);
-                BigDecimal value = sc.nextBigDecimal();
-                sc.nextLine();
+                BigDecimal value = new BigDecimal(input);
                 if (value.compareTo(min) >= 0 && value.compareTo(max) <= 0) {
                     return value;
                 }
                 System.out.println("Lỗi: Giá trị phải từ " + min + " đến " + max + "!");
             } catch (NumberFormatException e) {
                 System.out.println("Lỗi: Vui lòng nhập một số hợp lệ!");
-                sc.nextLine();
             }
         }
     }

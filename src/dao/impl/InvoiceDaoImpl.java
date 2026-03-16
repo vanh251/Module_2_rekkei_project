@@ -4,44 +4,53 @@ import dao.IInvoiceDao;
 import model.Invoice;
 import utils.ConnectionDB;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 public class InvoiceDaoImpl implements IInvoiceDao {
+
+    private Invoice mapRow(ResultSet rs) throws SQLException {
+        return new Invoice(
+                rs.getInt("id"),
+                rs.getInt("customer_id"),
+                rs.getString("customer_name"),
+                rs.getTimestamp("created_at").toLocalDateTime(),
+                rs.getBigDecimal("total_amount")
+        );
+    }
+
     @Override
     public List<Invoice> displayAllInvoices() {
-        try(
-                Connection conn = ConnectionDB.getConnection();
-                PreparedStatement pre = conn.prepareStatement("select * from invoice");
-                ) {
-            List<Invoice> invoiceList = new ArrayList<>();
-            ResultSet rs = pre.executeQuery();
-            while (rs.next()){
-                invoiceList.add(new Invoice(
-                        rs.getInt(1),
-                        rs.getInt(2),
-                        rs.getTimestamp(3).toLocalDateTime(),
-                        rs.getBigDecimal(4)
-                ));
+        String sql = """
+                SELECT i.id, i.customer_id, c.name AS customer_name, i.created_at, i.total_amount
+                FROM invoice i
+                LEFT JOIN customer c ON i.customer_id = c.id
+                ORDER BY i.id
+                """;
+        List<Invoice> invoiceList = new ArrayList<>();
+        try (
+            Connection conn = ConnectionDB.getConnection();
+            PreparedStatement pre = conn.prepareStatement(sql);
+            ResultSet rs = pre.executeQuery()
+        ) {
+            while (rs.next()) {
+                invoiceList.add(mapRow(rs));
             }
-            return invoiceList;
         } catch (SQLException e) {
             System.out.println("Lỗi khi truy vấn hóa đơn: " + e.getMessage());
-            return new ArrayList<>();
         }
+        return invoiceList;
     }
 
     @Override
     public void addInvoice(Invoice invoice) {
-        try(
-                Connection conn = ConnectionDB.getConnection();
-                PreparedStatement pre = conn.prepareStatement("insert into invoice(customer_id, total_amount) values(?, ?)");
-                ) {
+        String sql = "INSERT INTO invoice(customer_id, total_amount) VALUES(?, ?)";
+        try (
+            Connection conn = ConnectionDB.getConnection();
+            PreparedStatement pre = conn.prepareStatement(sql)
+        ) {
             pre.setInt(1, invoice.getCustomerId());
             pre.setBigDecimal(2, invoice.getTotalAmount());
             pre.executeUpdate();
@@ -51,64 +60,84 @@ public class InvoiceDaoImpl implements IInvoiceDao {
     }
 
     @Override
-    public List<Invoice> findInvoicesByCustomerId(int customerId) {
-        try(
-                Connection conn = ConnectionDB.getConnection();
-                PreparedStatement pre = conn.prepareStatement("select * from invoice where customer_id = ?");
-                ) {
-            pre.setInt(1, customerId);
-            List<Invoice> invoiceList = new ArrayList<>();
+    public int addInvoiceReturnId(Invoice invoice) {
+        String sql = "INSERT INTO invoice(customer_id, total_amount) VALUES(?, ?) RETURNING id";
+        try (
+            Connection conn = ConnectionDB.getConnection();
+            PreparedStatement pre = conn.prepareStatement(sql)
+        ) {
+            pre.setInt(1, invoice.getCustomerId());
+            pre.setBigDecimal(2, invoice.getTotalAmount());
             ResultSet rs = pre.executeQuery();
-            while (rs.next()){
-                invoiceList.add(new Invoice(
-                        rs.getInt(1),
-                        rs.getInt(2),
-                        rs.getTimestamp(3).toLocalDateTime(),
-                        rs.getBigDecimal(4)
-                ));
+            if (rs.next()) {
+                return rs.getInt(1);
             }
-            return invoiceList;
+        } catch (SQLException e) {
+            System.out.println("Lỗi khi thêm hóa đơn: " + e.getMessage());
+        }
+        return -1;
+    }
+
+    @Override
+    public List<Invoice> findInvoicesByCustomerId(int customerId) {
+        String sql = """
+                SELECT i.id, i.customer_id, c.name AS customer_name, i.created_at, i.total_amount
+                FROM invoice i
+                LEFT JOIN customer c ON i.customer_id = c.id
+                WHERE i.customer_id = ?
+                ORDER BY i.id
+                """;
+        List<Invoice> invoiceList = new ArrayList<>();
+        try (
+            Connection conn = ConnectionDB.getConnection();
+            PreparedStatement pre = conn.prepareStatement(sql)
+        ) {
+            pre.setInt(1, customerId);
+            ResultSet rs = pre.executeQuery();
+            while (rs.next()) {
+                invoiceList.add(mapRow(rs));
+            }
         } catch (SQLException e) {
             System.out.println("Lỗi khi truy vấn hóa đơn theo ID khách hàng: " + e.getMessage());
-            return new ArrayList<>();
         }
+        return invoiceList;
     }
 
     @Override
     public List<Invoice> findInvoicesByDate(LocalDate date) {
-        try(
-                Connection conn = ConnectionDB.getConnection();
-                PreparedStatement pre = conn.prepareStatement("select * from invoice where date(created_at) = ?");
-                ) {
-            pre.setDate(1, java.sql.Date.valueOf(date));
-            List<Invoice> invoiceList = new ArrayList<>();
+        String sql = """
+                SELECT i.id, i.customer_id, c.name AS customer_name, i.created_at, i.total_amount
+                FROM invoice i
+                LEFT JOIN customer c ON i.customer_id = c.id
+                WHERE date(i.created_at) = ?
+                ORDER BY i.id
+                """;
+        List<Invoice> invoiceList = new ArrayList<>();
+        try (
+            Connection conn = ConnectionDB.getConnection();
+            PreparedStatement pre = conn.prepareStatement(sql)
+        ) {
+            pre.setDate(1, Date.valueOf(date));
             ResultSet rs = pre.executeQuery();
-            while (rs.next()){
-                invoiceList.add(new Invoice(
-                        rs.getInt(1),
-                        rs.getInt(2),
-                        rs.getTimestamp(3).toLocalDateTime(),
-                        rs.getBigDecimal(4)
-                ));
+            while (rs.next()) {
+                invoiceList.add(mapRow(rs));
             }
-            return invoiceList;
         } catch (SQLException e) {
             System.out.println("Lỗi khi truy vấn hóa đơn theo ngày: " + e.getMessage());
-            return new ArrayList<>();
         }
+        return invoiceList;
     }
 
     @Override
     public Double getRevenueByDate(LocalDate date) {
-        try(
-                Connection conn = ConnectionDB.getConnection();
-                PreparedStatement pre = conn.prepareStatement("select sum(total_amount) from invoice where date(created_at) = ?");
-                ) {
-            pre.setDate(1, java.sql.Date.valueOf(date));
+        String sql = "SELECT sum(total_amount) FROM invoice WHERE date(created_at) = ?";
+        try (
+            Connection conn = ConnectionDB.getConnection();
+            PreparedStatement pre = conn.prepareStatement(sql)
+        ) {
+            pre.setDate(1, Date.valueOf(date));
             ResultSet rs = pre.executeQuery();
-            if (rs.next()){
-                return rs.getDouble(1);
-            }
+            if (rs.next()) return rs.getDouble(1);
         } catch (SQLException e) {
             System.out.println("Lỗi khi tính doanh thu theo ngày: " + e.getMessage());
         }
@@ -117,16 +146,15 @@ public class InvoiceDaoImpl implements IInvoiceDao {
 
     @Override
     public Double getRevenueByMonth(int month, int year) {
-        try(
-                Connection conn = ConnectionDB.getConnection();
-                PreparedStatement pre = conn.prepareStatement("select sum(total_amount) from invoice where extract(month from created_at) = ? and extract( year from created_at) = ?");
-                ) {
+        String sql = "SELECT sum(total_amount) FROM invoice WHERE extract(month from created_at) = ? AND extract(year from created_at) = ?";
+        try (
+            Connection conn = ConnectionDB.getConnection();
+            PreparedStatement pre = conn.prepareStatement(sql)
+        ) {
             pre.setInt(1, month);
             pre.setInt(2, year);
             ResultSet rs = pre.executeQuery();
-            if (rs.next()){
-                return rs.getDouble(1);
-            }
+            if (rs.next()) return rs.getDouble(1);
         } catch (SQLException e) {
             System.out.println("Lỗi khi tính doanh thu theo tháng: " + e.getMessage());
         }
@@ -135,15 +163,14 @@ public class InvoiceDaoImpl implements IInvoiceDao {
 
     @Override
     public Double getRevenueByYear(int year) {
-        try(
-                Connection conn = ConnectionDB.getConnection();
-                PreparedStatement pre = conn.prepareStatement("select sum(total_amount) from invoice where extract(year from created_at) = ?");
-                ) {
+        String sql = "SELECT sum(total_amount) FROM invoice WHERE extract(year from created_at) = ?";
+        try (
+            Connection conn = ConnectionDB.getConnection();
+            PreparedStatement pre = conn.prepareStatement(sql)
+        ) {
             pre.setInt(1, year);
             ResultSet rs = pre.executeQuery();
-            if (rs.next()){
-                return rs.getDouble(1);
-            }
+            if (rs.next()) return rs.getDouble(1);
         } catch (SQLException e) {
             System.out.println("Lỗi khi tính doanh thu theo năm: " + e.getMessage());
         }

@@ -45,16 +45,12 @@ public class RevenueView {
                 ========== Doanh thu theo ngày ==========
                 """);
         LocalDate date = InputValidator.getValidDate(sc, "Nhập ngày (dd/MM/yyyy): ");
-        Double revenue = invoiceService.getRevenueByDate(date);
-        if (revenue == null) {
-            System.out.println("Không có doanh thu cho ngày " + date);
-        } else {
-            System.out.println("+----------------------+------------------+");
-            System.out.printf("| %-20s | %16s |\n", "Date", "Revenue");
-            System.out.println("+----------------------+------------------+");
-            System.out.printf("| %-20s | %16.2f |\n", date, revenue);
-            System.out.println("+----------------------+------------------+");
-        }
+        double revenue = invoiceService.getRevenueByDate(date);
+        System.out.println("+----------------------+------------------+");
+        System.out.printf("| %-20s | %16s |\n", "Ngày", "Doanh thu (đ)");
+        System.out.println("+----------------------+------------------+");
+        System.out.printf("| %-20s | %,16.2f |\n", date, revenue);
+        System.out.println("+----------------------+------------------+");
     }
 
     public static void showRevenueByMonth(Scanner sc){
@@ -63,16 +59,12 @@ public class RevenueView {
                 """);
         int month = InputValidator.getIntInRange(sc, "Nhập tháng (1-12): ", 1, 12);
         int year = InputValidator.getIntInRange(sc, "Nhập năm: ", 1900, LocalDate.now().getYear());
-        Double revenue = invoiceService.getRevenueByMonth(month, year);
-        if (revenue == null) {
-            System.out.println("Không có doanh thu cho tháng " + month + "/" + year);
-        } else {
-            System.out.println("+----------------------+------------------+");
-            System.out.printf("| %-20s | %16s |\n", "Month/Year", "Revenue");
-            System.out.println("+----------------------+------------------+");
-            System.out.printf("| %-20s | %16.2f |\n", month + "/" + year, revenue);
-            System.out.println("+----------------------+------------------+");
-        }
+        double revenue = invoiceService.getRevenueByMonth(month, year);
+        System.out.println("+----------------------+------------------+");
+        System.out.printf("| %-20s | %16s |\n", "Tháng/Năm", "Doanh thu (đ)");
+        System.out.println("+----------------------+------------------+");
+        System.out.printf("| %-20s | %,16.2f |\n", month + "/" + year, revenue);
+        System.out.println("+----------------------+------------------+");
     }
 
     public static void showRevenueByYear(Scanner sc){
@@ -80,15 +72,11 @@ public class RevenueView {
                 ========== Doanh thu theo năm ==========
                 """);
         int year = InputValidator.getIntInRange(sc, "Nhập năm: ", 1900, LocalDate.now().getYear());
-        Double revenue = invoiceService.getRevenueByYear(year);
-        if (revenue == null) {
-            System.out.println("Không có doanh thu cho năm " + year);
-        } else {
-            System.out.println("+----------------------+------------------+");
-            System.out.printf("| %-20s | %16s |\n", "Year", "Revenue");
-            System.out.println("+----------------------+------------------+");
-            System.out.printf("| %-20s | %16.2f |\n", year, revenue);
-            System.out.println("+----------------------+------------------+");
-        }
+        double revenue = invoiceService.getRevenueByYear(year);
+        System.out.println("+----------------------+------------------+");
+        System.out.printf("| %-20s | %16s |\n", "Năm", "Doanh thu (đ)");
+        System.out.println("+----------------------+------------------+");
+        System.out.printf("| %-20s | %,16.2f |\n", year, revenue);
+        System.out.println("+----------------------+------------------+");
     }
 }
