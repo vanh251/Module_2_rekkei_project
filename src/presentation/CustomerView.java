@@ -137,8 +137,11 @@ public class CustomerView {
         System.out.print("Bạn có chắc chắn muốn xoá khách hàng này? (y/n): ");
         String confirm = sc.nextLine();
         if (confirm.equalsIgnoreCase("y")) {
-            customerService.deleteCustomer(id);
-            System.out.println("Xoá khách hàng thành công");
+            if (customerService.deleteCustomer(id)){
+                System.out.println("Xoá khách hàng thành công");
+            } else {
+                System.out.println("Không thể xoá khách hàng này vì có liên quan đến hoá đơn, vui lòng xoá hoá đơn liên quan trước");
+            }
         } else {
             System.out.println("Đã hủy xoá khách hàng");
         }

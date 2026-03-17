@@ -16,7 +16,7 @@ public class CustomerDaoImpl implements ICustomerDao {
     public List<Customer> displayAllCustomers() {
         try(
                 Connection conn = ConnectionDB.getConnection();
-                PreparedStatement pre = conn.prepareStatement("select * from customer");
+                PreparedStatement pre = conn.prepareStatement("select * from customer order by id desc ");
                 ) {
             ResultSet rs = pre.executeQuery();
             List<Customer> customerList = new ArrayList<>();
@@ -95,16 +95,18 @@ public class CustomerDaoImpl implements ICustomerDao {
     }
 
     @Override
-    public void deleteCustomer(int id) {
+    public boolean deleteCustomer(int id) {
         try(
                 Connection conn = ConnectionDB.getConnection();
                 PreparedStatement pre = conn.prepareStatement("delete from customer where id = ?");
                 ) {
             pre.setInt(1, id);
             pre.executeUpdate();
+            return true;
         } catch (SQLException e) {
             System.out.println("Lỗi khi xoá khách hàng: " + e.getMessage());
         }
+        return false;
     }
 
     @Override

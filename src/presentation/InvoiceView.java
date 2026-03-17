@@ -48,7 +48,7 @@ public class InvoiceView {
             int choice = InputValidator.getIntInRange(sc, "Nhập lựa chọn: ", 1, 4);
             switch (choice) {
                 case 1:
-                    displayAllInvoices();
+                    displayAllInvoices(sc);
                     break;
                 case 2:
                     addInvoice(sc);
@@ -63,13 +63,14 @@ public class InvoiceView {
         }
     }
 
-    public static void displayAllInvoices() {
+    public static void displayAllInvoices(Scanner sc) {
         System.out.println("========== Danh sách hóa đơn ==========");
         List<Invoice> invoiceList = invoiceService.displayAllInvoices();
         if (invoiceList.isEmpty()) {
             System.out.println("Không có hóa đơn nào trong hệ thống.\n");
         } else {
             printInvoiceTable(invoiceList);
+//            askViewDetail(sc, invoiceList);
         }
     }
 

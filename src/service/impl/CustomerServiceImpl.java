@@ -31,8 +31,8 @@ public class CustomerServiceImpl implements ICustomerService {
     }
 
     @Override
-    public void deleteCustomer(int id) {
-        customerDao.deleteCustomer(id);
+    public boolean deleteCustomer(int id) {
+        return customerDao.deleteCustomer(id);
     }
 
     @Override

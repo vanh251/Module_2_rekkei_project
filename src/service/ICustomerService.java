@@ -9,7 +9,7 @@ public interface ICustomerService {
     void addCustomer(Customer customer);
     Customer findCustomerById(int id);
     void updateCustomer(Customer customer);
-    void deleteCustomer(int id);
+    boolean deleteCustomer(int id);
     List<Customer> findCustomersByName(String name);
     Customer findCustomerByEmail(String email);
 }
