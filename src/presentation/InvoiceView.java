@@ -77,6 +77,7 @@ public class InvoiceView {
         System.out.println("========== Thêm mới hóa đơn ==========");
 
         // 1. Chọn khách hàng
+        CustomerView.displayAllCustomers(sc);
         int customerId = InputValidator.getPositiveInt(sc, "Nhập ID khách hàng: ");
         Customer customer = customerService.findCustomerById(customerId);
         if (customer == null) {
