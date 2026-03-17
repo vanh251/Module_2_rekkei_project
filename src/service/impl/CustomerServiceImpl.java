@@ -39,4 +39,9 @@ public class CustomerServiceImpl implements ICustomerService {
     public List<Customer> findCustomersByName(String name) {
         return customerDao.findCustomersByName(name);
     }
+
+    @Override
+    public Customer findCustomerByEmail(String email) {
+        return customerDao.findCustomerByEmail(email);
+    }
 }

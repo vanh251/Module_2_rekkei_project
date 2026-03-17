@@ -131,4 +131,28 @@ public class CustomerDaoImpl implements ICustomerDao {
             return new ArrayList<>();
         }
     }
+
+    @Override
+    public Customer findCustomerByEmail(String email) {
+        try(
+                Connection conn = ConnectionDB.getConnection();
+                PreparedStatement pre = conn.prepareStatement("select * from customer where email = ?");
+                ) {
+            pre.setString(1, email);
+            ResultSet rs = pre.executeQuery();
+            if (rs.next()){
+                return new Customer(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getString("phone"),
+                        rs.getString("email"),
+                        rs.getString("address")
+                );
+            }
+            return null;
+        } catch (SQLException e) {
+            System.out.println("Lỗi khi tìm kiếm khách hàng theo email: " + e.getMessage());
+            return null;
+        }
+    }
 }

@@ -11,4 +11,5 @@ public interface ICustomerDao {
     void updateCustomer(Customer customer);
     void deleteCustomer(int id);
     List<Customer> findCustomersByName(String name);
+    Customer findCustomerByEmail(String email);
 }

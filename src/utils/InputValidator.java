@@ -1,10 +1,14 @@
 package utils;
 
+import service.ICustomerService;
+import service.impl.CustomerServiceImpl;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Scanner;
 
 public class InputValidator {
+    private static final ICustomerService customerService = new CustomerServiceImpl();
     
     public static int getIntInput(Scanner sc, String prompt) {
         while (true) {
@@ -107,10 +111,16 @@ public class InputValidator {
                 System.out.println("Lỗi: Email không được để trống!");
                 continue;
             }
+
+            if (customerService.findCustomerByEmail(email) != null) {
+                System.out.println("Lỗi: Email đã tồn tại trong hệ thống!");
+                continue;
+            }
             
             if (email.matches("^[A-Za-z0-9+_.-]+@([A-Za-z0-9.-]+\\.[A-Za-z]{2,})$")) {
                 return email;
             }
+
             System.out.println("Lỗi: Email không hợp lệ!");
         }
     }
