@@ -84,7 +84,7 @@ public class AdminView {
                 case 5:
                     System.out.println("Đăng xuất thành công");
                     adminLogin = null;
-                    return;
+                    showStartMenu(sc);
             }
         }
     }

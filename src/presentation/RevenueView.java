@@ -7,7 +7,6 @@ import utils.InputValidator;
 import java.time.LocalDate;
 import java.util.Scanner;
 
-import static presentation.AdminView.showMainMenu;
 
 public class RevenueView {
     private static final IInvoiceService invoiceService = new InvoiceServiceimpl();
@@ -34,8 +33,7 @@ public class RevenueView {
                     showRevenueByYear(sc);
                     break;
                 case 4:
-                    showMainMenu(sc);
-                    break;
+                    return;
             }
         }
     }

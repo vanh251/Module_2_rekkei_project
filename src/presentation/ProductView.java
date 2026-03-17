@@ -51,8 +51,7 @@ public class ProductView {
                     findProductByStockAvailability(sc);
                     break;
                 case 8:
-                    showMainMenu(sc);
-                    break;
+                    return;
             }
         }
     }

@@ -39,8 +39,7 @@ public class CustomerView {
                     deleteCustomer(sc);
                     break;
                 case 5:
-                    showMainMenu(sc);
-                    break;
+                    return;
             }
         }
     }
@@ -98,12 +97,20 @@ public class CustomerView {
         System.out.print("Nhập số điện thoại khách hàng mới (bỏ trống nếu không muốn thay đổi): ");
         String phone = sc.nextLine().trim();
         if (!phone.isEmpty()) {
-            customer.setPhone(phone);
+            if (phone.matches("^\\d{10,11}$")) {
+                customer.setPhone(phone);
+            } else {
+                System.out.println("Số điện thoại không hợp lệ, bỏ qua cập nhật số điện thoại.");
+            }
         }
         System.out.print("Nhập email khách hàng mới (bỏ trống nếu không muốn thay đổi): ");
         String email = sc.nextLine().trim();
         if (!email.isEmpty()) {
-            customer.setEmail(email);
+            if (email.matches("^[A-Za-z0-9+_.-]+@([A-Za-z0-9.-]+\\.[A-Za-z]{2,})$")) {
+                customer.setEmail(email);
+            } else {
+                System.out.println("Email không hợp lệ, bỏ qua cập nhật email.");
+            }
         }
         System.out.print("Nhập địa chỉ khách hàng mới (bỏ trống nếu không muốn thay đổi): ");
         String address = sc.nextLine().trim();
